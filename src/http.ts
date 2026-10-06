@@ -14,7 +14,11 @@ export class ApiError extends Error {
 export const ok = (c: Context, data: unknown, status: 200 | 201 = 200) =>
   c.json({ success: true, data }, status);
 
+/**
+ * Required error format: {"error": "<message>"}. `code` is an extra machine-readable field
+ * (e.g. NOT_FOUND vs EQUIPMENT_NOT_FOUND, both 404) so clients and tests need not parse text.
+ */
 export const errorBody = (code: string, message: string) => ({
-  success: false as const,
-  error: { code, message },
+  error: message,
+  code,
 });

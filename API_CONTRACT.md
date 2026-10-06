@@ -4,8 +4,9 @@
 
 ## Envelopes
 Success: `{ "success": true, "data": <object|array> }` (except 204: no body)
-Error: `{ "success": false, "error": { "code": "<MACHINE_CODE>", "message": "<human text>" } }`
-Clients branch on `code`; `message` is for people.
+Error (required format): `{ "error": "<human-readable message>", "code": "<MACHINE_CODE>" }`
+`error` is always a non-empty string. `code` is an extra field so clients can tell e.g. `NOT_FOUND` from
+`EQUIPMENT_NOT_FOUND` (both 404) without parsing text. Built in one place: `errorBody()` in `src/http.ts`.
 
 ## Resources
 **Equipment** `{ id, name, location }`
@@ -29,7 +30,7 @@ Example POST:
 Example PATCH (only this field is required): `{"purpose":"Updated class presentation"}`
 
 ## Status codes and error codes
-| Status | `error.code` | When |
+| Status | `code` | When |
 |---|---|---|
 | 400 | `VALIDATION_ERROR` | missing/wrong-type/empty/too-long field; bad timestamp; `endAt` ≤ `startAt` (also for the merged PATCH result); empty PATCH |
 | 400 | `INVALID_JSON` | body is not parseable JSON |
@@ -51,4 +52,6 @@ Example PATCH (only this field is required): `{"purpose":"Updated class presenta
 - Past dates are allowed (not restricted by the brief).
 - No authentication: all endpoints are open (see README → Security).
 - CORS: allowed methods GET, POST, PATCH, DELETE, OPTIONS; header Content-Type; origins from `ALLOWED_ORIGINS`.
-- `tester.html` was **not provided**, so frontend compatibility is NOT VERIFIED; the `{success,data}` envelope follows the brief.
+- `tester.html` was **not provided**, so frontend compatibility is NOT VERIFIED. The error format `{"error":"..."}` and the
+  status codes of the 9-step cURL guide are verified (`npm run test:guide`, section A of `tests/run-tests.mjs`). The success envelope `{success,data}` was
+  not specified by the requirements available; if the tester expects bare objects/arrays, change `ok()` in `src/http.ts`.

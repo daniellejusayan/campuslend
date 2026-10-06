@@ -12,7 +12,7 @@
     {
       "binding": "DB",
       "database_name": "campuslend-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "f40fee3b-dc57-4fdd-9ebb-d15b2c822f94",
       "migrations_dir": "migrations"
     }
   ]

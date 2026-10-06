@@ -7,8 +7,11 @@
   "scripts": {
     "dev": "wrangler dev",
     "migrate": "wrangler d1 migrations apply campuslend-db --local",
+    "migrate:remote": "wrangler d1 migrations apply campuslend-db --remote",
+    "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
-    "test": "bash tests/run-tests.sh"
+    "test": "node tests/run-tests.mjs",
+    "test:guide": "node tests/run-tests.mjs --guide-only --out docs/guide-results.md"
   },
   "dependencies": {
     "hono": "^4.13.13",

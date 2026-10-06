@@ -1,0 +1,8 @@
+# Trigger fallback check (temporary mutation: 'if (clash)' -> 'if (clash && false)' in src/bookings-db.ts, then restored)
+seed A eq-1 09-11      -> 201
+seed B eq-1 13-14      -> 201
+POST overlap 10-12     -> 409 {"error":"That equipment is already booked for an overlapping time","code":"BOOKING_CONFLICT"}
+PATCH B into 10:30-11:30 -> 409 {"error":"That equipment is already booked for an overlapping time","code":"BOOKING_CONFLICT"}
+PATCH A purpose only (self, must not trip trigger) -> 200
+rows on eq-1 (expect 2)  -> 2
+Result: PASS (file restored afterwards; git diff on src/bookings-db.ts is empty)

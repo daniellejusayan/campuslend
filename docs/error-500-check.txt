@@ -1,0 +1,9 @@
+# Forced-500 check (run 2026-10-06, local). Second wrangler dev on port 8799 with --persist-to an EMPTY directory,
+# so D1 has no tables and every query raises a real SQLite error.
+GET  /api/bookings -> 500  {"error":"Something went wrong on the server","code":"INTERNAL_ERROR"}
+POST /api/bookings -> 500  {"error":"Something went wrong on the server","code":"INTERNAL_ERROR"}
+Leak words in response bodies (sqlite|no such table|D1_ERROR|stack|.ts:): 0
+Server log (detail stays server-side):
+  X [ERROR] Unhandled error: Error: D1_ERROR: no such table: bookings: SQLITE_ERROR
+  X [ERROR] Unhandled error: Error: D1_ERROR: no such table: equipment: SQLITE_ERROR
+Result: PASS

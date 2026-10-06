@@ -1,0 +1,13 @@
+| Test                           | Expected | Actual | Result | Response body (first 160 chars)
+|--------------------------------|----------|--------|--------|
+| 1 List equipment               |      200 |    200 | PASS   | {"success":true,"data":[{"id":"eq-1","name":"Projector A","location":"Building 1"},{"id":"eq-2","name":"Canon EOS R50 Camera","location":"Media Lab, Building 3"
+| 2 List bookings                |      200 |    200 | PASS   | {"success":true,"data":[]}
+| 3 Create booking               |      201 |    201 | PASS   | {"success":true,"data":{"id":"bk-94b1d752-644a-4c30-98d1-3cb65d089731","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z"
+| 4 Get booking                  |      200 |    200 | PASS   | {"success":true,"data":{"id":"bk-94b1d752-644a-4c30-98d1-3cb65d089731","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z"
+| 5 Update booking               |      200 |    200 | PASS   | {"success":true,"data":{"id":"bk-94b1d752-644a-4c30-98d1-3cb65d089731","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z"
+| 6 Invalid time range           |      400 |    400 | PASS   | {"error":"endAt: must be after startAt","code":"VALIDATION_ERROR"}
+| 7 Overlapping booking          |      409 |    409 | PASS   | {"error":"That equipment is already booked for an overlapping time","code":"BOOKING_CONFLICT"}
+| 8 Missing booking              |      404 |    404 | PASS   | {"error":"Booking not found","code":"NOT_FOUND"}
+| 9 Delete booking               |      204 |    204 | PASS   | 
+| 9b Get after delete            |      404 |    404 | PASS   | {"error":"Booking not found","code":"NOT_FOUND"}
+failures: 0

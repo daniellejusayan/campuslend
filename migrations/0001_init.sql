@@ -3,13 +3,13 @@
 -- chronologically, so SQL "<" / ">" comparisons are correct.
 
 CREATE TABLE equipment (
-  id       TEXT PRIMARY KEY,
+  id       TEXT PRIMARY KEY NOT NULL, -- SQLite allows NULL in a non-INTEGER PK unless NOT NULL is explicit
   name     TEXT NOT NULL UNIQUE CHECK (length(trim(name)) > 0),
   location TEXT NOT NULL        CHECK (length(trim(location)) > 0)
 );
 
 CREATE TABLE bookings (
-  id            TEXT PRIMARY KEY,
+  id            TEXT PRIMARY KEY NOT NULL,
   equipment_id  TEXT NOT NULL REFERENCES equipment(id) ON DELETE RESTRICT,
   borrower_name TEXT NOT NULL CHECK (length(trim(borrower_name)) BETWEEN 1 AND 100),
   start_at      TEXT NOT NULL,
