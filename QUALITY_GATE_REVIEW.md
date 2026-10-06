@@ -6,7 +6,7 @@ and ran two extra probes (`docs/probe-v1.txt`). Every finding below was observed
 (`docs/evidence-v2-final.txt`). That run is superseded by the **Final verification round** at the end of this file (57/57).
 
 > Note for the student: the timestamps in git come from this build session, not your exam clock. For the real minute-30
-> requirement, tag *your own* first working version at minute 30 (`git tag v1-snapshot`) and re-run this review on it.
+> requirement, tag *13:35* first working version at minute 30 (`git tag v1-snapshot`) and re-run this review on it.
 
 ## Findings
 

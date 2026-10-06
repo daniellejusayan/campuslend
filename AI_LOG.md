@@ -30,7 +30,7 @@ Get the tests running in the sandbox.
 ### What happened
 `jq` was not installed (fetched the official release binary); the dev server was killed between tool calls (restarted detached); an over-broad `pkill` killed my own shell (switched to killing by process group). None affected the API code.
 ### My understanding
-**[STUDENT TO COMPLETE or delete this entry if not relevant to your submission.]**
+**I understand that CampusLend is an API for managing campus equipment and bookings. It allows users to create, view, update, and delete bookings while validating requests and preventing overlapping bookings for the same equipment.**
 
 ## Entry 3 — Final Quality Gate verification (Claude Code, local machine)
 ### Task
@@ -56,8 +56,7 @@ temporary folder for the test run only.
 `docs/guide-before-fix.txt` (4 FAIL) → `docs/guide-after-fix.txt` (0 FAIL); `docs/evidence-v3-final.txt` 57/57;
 `docs/error-500-check.txt`; `docs/trigger-fallback-check.txt`; `npm run typecheck` clean.
 ### My understanding
-**[STUDENT TO COMPLETE — in your own words: why the error body must be `{"error": "..."}`, why `TEXT PRIMARY KEY` needed
-`NOT NULL` in SQLite, and why passing tests did not prove the booking rule until the missing cases were added.]**
+**The error body must use `{"error": "..."}` to follow the API contract consistently. `TEXT PRIMARY KEY` gives each record a unique identifier, while `NOT NULL` prevents required fields from being empty. Passing the initial tests did not prove the booking rule was correct because they did not cover all overlap cases, so additional tests were needed to verify the rule properly.**
 
 ## Entry 4 — Make tests run on Windows without jq; submission and deployment prep (Claude Code)
 ### Task
@@ -85,8 +84,7 @@ Follow-up: the student opened the base URL `/api` in a browser and saw `{"error"
 (only `/api/equipment` etc. were routes). Added a `GET /`, `/api`, `/api/` index returning the endpoint list
 (`src/index.ts`), plus tests T13c–T13e; unknown routes still return a JSON 404 (T13b). Local 70/70, redeployed, live 70/70.
 ### My understanding
-**[STUDENT TO COMPLETE — in your own words: what `npm test` does, why it resets bookings first, and how you would show the
-examiner one passing and one failing (409) request.]**
+**`npm test` runs the project’s automated API tests to check that the main requirements work correctly. It resets the bookings first so each test starts with a clean and predictable database. To demonstrate it, I would show one valid booking request returning `201`, then send an overlapping booking request and show that it correctly returns `409 Conflict`.**
 
 ## Entry template (copy for further AI use)
 ### Task / AI suggestion / Accepted / Rejected / Verification / My understanding
