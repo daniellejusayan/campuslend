@@ -1,6 +1,7 @@
 # CampusLend API Contract
 
-**Base URL** `http://localhost:8787/api` · **Format** JSON (`Content-Type: application/json`)
+**Base URL** `http://localhost:8787/api` (local) · `https://campuslend.mykanbanboard.workers.dev/api` (deployed) ·
+**Format** JSON (`Content-Type: application/json`)
 
 ## Envelopes
 Success: `{ "success": true, "data": <object|array> }` (except 204: no body)
@@ -16,6 +17,7 @@ Timestamps are ISO-8601 UTC strings, e.g. `2026-10-20T09:00:00.000Z`.
 ## Endpoints
 | Method | Path | Request body | Success |
 |---|---|---|---|
+| GET | (base URL itself; also the site root `/`) | – | 200 `data: { name, endpoints: string[] }` (index for humans) |
 | GET | /equipment | – | 200 `data: Equipment[]` |
 | GET | /bookings | – | 200 `data: Booking[]` (ordered by startAt) |
 | GET | /bookings/:id | – | 200 `data: Booking` |

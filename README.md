@@ -7,10 +7,10 @@ REST API for booking shared campus equipment (projectors, cameras, laptops, micr
 | | |
 |---|---|
 | GitHub repository | https://github.com/daniellejusayan/campuslend |
-| Live API (Cloudflare Workers + D1) | https://campuslend.mykanbanboard.workers.dev/api/equipment |
+| Live API (Cloudflare Workers + D1) | https://campuslend.mykanbanboard.workers.dev/api |
 | Base API URL used for testing | local: `http://localhost:8787/api` · deployed: `https://campuslend.mykanbanboard.workers.dev/api` |
 
-There is no route at `/` (it returns a JSON 404); use the `/api/...` paths.
+Opening `/` or `/api` in a browser shows a JSON list of all endpoints.
 
 ## Submission checklist
 | Required item | Where |
@@ -37,7 +37,7 @@ npm run dev          # 3. start the API on http://localhost:8787  (leave this te
 ```
 In a **second terminal**:
 ```bash
-npm test             # runs 67 checks against http://localhost:8787 -> writes docs/evidence-local.md
+npm test             # runs 70 checks against http://localhost:8787 -> writes docs/evidence-local.md
 npm run test:guide   # only the exam's 9-step cURL sequence -> writes docs/guide-results.md
 npm run typecheck    # TypeScript check
 ```
@@ -75,10 +75,11 @@ npm test -- --remote --base https://campuslend.mykanbanboard.workers.dev   # -> 
 Note: changing `database_id` also changes which local database `wrangler dev` uses, so run `npm run migrate` again afterwards.
 
 ## Endpoints
-Base URL: `http://localhost:8787/api` (local) or `https://<worker>.workers.dev/api` (deployed).
+Base URL: `http://localhost:8787/api` (local) or `https://campuslend.mykanbanboard.workers.dev/api` (deployed).
 
 | Method | Path | Success | Errors |
 |---|---|---|---|
+| GET | `/` or `/api` | 200 | – (endpoint index) |
 | GET | `/api/equipment` | 200 | – |
 | GET | `/api/bookings` | 200 | – |
 | GET | `/api/bookings/:id` | 200 | 404 |
@@ -137,8 +138,8 @@ erDiagram
 
 | Run | Base API URL used for testing | Database | Result | Evidence |
 |---|---|---|---|---|
-| Local (2026-10-06) | `http://localhost:8787/api` | local D1 (`wrangler dev`) | **67 passed, 0 failed** | [docs/evidence-local.md](docs/evidence-local.md) |
-| Cloudflare (2026-10-06) | `https://campuslend.mykanbanboard.workers.dev/api` | remote D1 `campuslend-db` | **67 passed, 0 failed** | [docs/evidence-cloudflare.md](docs/evidence-cloudflare.md) |
+| Local (2026-10-06) | `http://localhost:8787/api` | local D1 (`wrangler dev`) | **70 passed, 0 failed** | [docs/evidence-local.md](docs/evidence-local.md) |
+| Cloudflare (2026-10-06) | `https://campuslend.mykanbanboard.workers.dev/api` | remote D1 `campuslend-db` | **70 passed, 0 failed** | [docs/evidence-cloudflare.md](docs/evidence-cloudflare.md) |
 
 Key cases (actual status was identical in both runs):
 

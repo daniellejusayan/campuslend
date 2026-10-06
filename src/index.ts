@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { ApiError, errorBody } from "./http";
+import { ApiError, errorBody, ok } from "./http";
 import { equipment } from "./routes/equipment";
 import { bookings } from "./routes/bookings";
 
@@ -22,6 +22,21 @@ app.use("/api/*", (c, next) => {
 
 app.route("/api/equipment", equipment);
 app.route("/api/bookings", bookings);
+
+// Index: opening the base URL in a browser shows what is available instead of a 404.
+app.on("GET", ["/", "/api", "/api/"], (c) =>
+  ok(c, {
+    name: "CampusLend API",
+    endpoints: [
+      "GET /api/equipment",
+      "GET /api/bookings",
+      "GET /api/bookings/:id",
+      "POST /api/bookings",
+      "PATCH /api/bookings/:id",
+      "DELETE /api/bookings/:id",
+    ],
+  }),
+);
 
 app.notFound((c) => c.json(errorBody("NOT_FOUND", "Route not found"), 404));
 

@@ -227,6 +227,15 @@ if (!GUIDE_ONLY) {
   check("T13a Malformed JSON", `POST body '{"equipmentId": '`, 400, await call("POST", "/bookings", '{"equipmentId": '), (b) => b.code === "INVALID_JSON", "INVALID_JSON");
   check("T13b Unknown route returns JSON 404", "GET /api/nonexistent", 404, await call("GET", "/nonexistent"), (b) => b.code === "NOT_FOUND", "NOT_FOUND");
 
+  // Index at the base URLs (what a browser shows when the link is opened)
+  const isIndex = (b) => b.success === true && b.data.endpoints.includes("POST /api/bookings");
+  check("T13c Base API URL /api shows the endpoint index", "GET /api", 200, await call("GET", ""), isIndex, "endpoint list");
+  check("T13d Base API URL with trailing slash /api/", "GET /api/", 200, await call("GET", "/"), isIndex, "endpoint list");
+  const root = await fetch(`${BASE}/`);
+  const rootText = await root.text();
+  record("T13e Site root / shows the endpoint index", "GET /", "200 + endpoint list", `${root.status} ${rootText.slice(0, 150)}`,
+    root.status === 200 && rootText.includes("POST /api/bookings"));
+
   // Equipment
   check("T14 List equipment", "GET /equipment", 200, await call("GET", "/equipment"),
     (b) => b.success === true && b.data.length >= 2 && ["id", "name", "location"].every((k) => k in b.data[0]), "id, name, location");

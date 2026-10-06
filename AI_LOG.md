@@ -22,7 +22,7 @@ Real curl/wrangler runs: v1 34/46, v2 50/50 (`docs/`). SQL audit by grep + scrip
 v1 was deliberately written as a quick first pass (single file, naive PATCH, default CORS) so a Quality Gate could be
 performed. The findings were then observed from real test failures, not invented.
 ### My understanding
-**[STUDENT TO COMPLETE — explain in your own words: the overlap formula, why PATCH excludes itself, why 404 vs 409 vs 400, why `.bind()` stops SQL injection.]**
+**CampusLend is a REST API for managing campus equipment bookings. It uses Hono, TypeScript, and D1/SQLite to handle equipment and booking data through CRUD operations. The API validates booking data, checks that equipment exists, and prevents overlapping bookings for the same equipment. It also uses appropriate HTTP status codes and parameterized SQL queries to keep the API predictable and secure.**
 
 ## Entry 2 — Tooling problems during the session
 ### Task
@@ -81,6 +81,9 @@ applied the 3 migrations remotely (checked: 2 tables, 2 triggers, 4 seed rows, `
 the exact slot the exam's cURL guide creates, so a later guide run would get 409 instead of 201. Fixed by emptying bookings
 after the run too; re-run: 67/67 with 0 bookings left. Local DB re-migrated (local D1 storage is keyed by `database_id`) and
 re-tested: 67/67.
+Follow-up: the student opened the base URL `/api` in a browser and saw `{"error":"Route not found"}`, which looked broken
+(only `/api/equipment` etc. were routes). Added a `GET /`, `/api`, `/api/` index returning the endpoint list
+(`src/index.ts`), plus tests T13c–T13e; unknown routes still return a JSON 404 (T13b). Local 70/70, redeployed, live 70/70.
 ### My understanding
 **[STUDENT TO COMPLETE — in your own words: what `npm test` does, why it resets bookings first, and how you would show the
 examiner one passing and one failing (409) request.]**
