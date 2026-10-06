@@ -1,0 +1,22 @@
+{
+  "name": "campuslend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CampusLend - Equipment Loan Platform API (Hono + Cloudflare D1)",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "migrate": "wrangler d1 migrations apply campuslend-db --local",
+    "typecheck": "tsc --noEmit",
+    "test": "bash tests/run-tests.sh"
+  },
+  "dependencies": {
+    "hono": "^4.13.13",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261006.1",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.147.0"
+  }
+}
