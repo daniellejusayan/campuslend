@@ -1,0 +1,9 @@
+== Date leniency probes (v1) ==
+startAt='2026-10-20 09:00' -> 201 stored: 2026-10-20T09:00:00.000Z
+startAt='Oct 20 2026 9:00' -> 201 stored: 2026-10-20T09:00:00.000Z
+startAt='2026-10-20T09:00:00' -> 201 stored: 2026-10-20T09:00:00.000Z
+startAt='2026-10-20' -> 201 stored: 2026-10-20T00:00:00.000Z
+== Race probe: 12 parallel POSTs for the SAME slot (v1) ==
+      1 201
+     11 409
+[{"rows_for_same_slot":1}]

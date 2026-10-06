@@ -1,0 +1,356 @@
+----
+Test:     T01 Create booking
+Request:  POST /bookings (eq-1 09:00-11:00)
+Expected: 201
+Actual:   201 {"success":true,"data":{"id":"bk-4545041c-b0ea-44ea-aeaf-1432ce30022f","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z","endAt":"2026-10-20T11:00:00.000Z","purpose":"Class presentation","createdAt":"2026-10-06T06:40:32.128Z","updatedAt":"2026-10-06T06:40:32.1
+Result:   PASS
+
+----
+Test:     T02 List bookings
+Request:  GET /bookings
+Expected: 200
+Actual:   200 {"success":true,"data":[{"id":"bk-4545041c-b0ea-44ea-aeaf-1432ce30022f","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z","endAt":"2026-10-20T11:00:00.000Z","purpose":"Class presentation","createdAt":"2026-10-06T06:40:32.128Z","updatedAt":"2026-10-06T06:40:32.
+Result:   PASS
+
+----
+Test:     T03 Get one booking
+Request:  GET /bookings/bk-4545041c-b0ea-44ea-aeaf-1432ce30022f
+Expected: 200
+Actual:   200 {"success":true,"data":{"id":"bk-4545041c-b0ea-44ea-aeaf-1432ce30022f","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z","endAt":"2026-10-20T11:00:00.000Z","purpose":"Class presentation","createdAt":"2026-10-06T06:40:32.128Z","updatedAt":"2026-10-06T06:40:32.1
+Result:   PASS
+
+----
+Test:     T04 PATCH partial (purpose only)
+Request:  PATCH /bookings/bk-4545041c-b0ea-44ea-aeaf-1432ce30022f {purpose}
+Expected: 200
+Actual:   200 {"success":true,"data":{"id":"bk-4545041c-b0ea-44ea-aeaf-1432ce30022f","equipmentId":"eq-1","borrowerName":"Somchai Jaidee","startAt":"2026-10-20T09:00:00.000Z","endAt":"2026-10-20T11:00:00.000Z","purpose":"Updated class presentation","createdAt":"2026-10-06T06:40:32.128Z","updatedAt":"2026-10-06T06
+Result:   PASS
+
+----
+Test:     T05a Delete booking
+Request:  DELETE /bookings/bk-ab51535b-cc37-4fe7-a886-eb07bbfcc0f2
+Expected: 204
+Actual:   204 
+Result:   PASS
+
+(204 body is empty: OK)
+----
+Test:     T05b Deleted booking is gone
+Request:  GET /bookings/bk-ab51535b-cc37-4fe7-a886-eb07bbfcc0f2
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"NOT_FOUND","message":"Booking not found"}}
+Result:   PASS
+
+----
+Test:     T06a Invalid range endAt<startAt
+Request:  POST endAt before startAt
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"endAt: must be after startAt"}}
+Result:   PASS
+
+----
+Test:     T06b Invalid range endAt==startAt
+Request:  POST endAt equals startAt
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"endAt: must be after startAt"}}
+Result:   PASS
+
+----
+Test:     T06c Invalid date string
+Request:  POST startAt=not-a-date
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"startAt: must be an ISO-8601 timestamp with timezone, e.g. 2026-10-20T09:00:00.000Z"}}
+Result:   PASS
+
+----
+Test:     T06d Missing borrowerName
+Request:  POST without borrowerName
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"borrowerName: Invalid input: expected string, received undefined"}}
+Result:   PASS
+
+----
+Test:     T06e Whitespace-only borrowerName
+Request:  POST borrowerName=3 spaces
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"borrowerName: Too small: expected string to have >=1 characters"}}
+Result:   PASS
+
+----
+Test:     T06f Non-string borrowerName
+Request:  POST borrowerName=123
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"borrowerName: Invalid input: expected string, received number"}}
+Result:   PASS
+
+----
+Test:     T06g Over-long borrowerName (101)
+Request:  POST borrowerName length 101
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"borrowerName: Too big: expected string to have <=100 characters"}}
+Result:   PASS
+
+----
+Test:     T06h Timestamp without timezone rejected
+Request:  POST startAt=2026-10-21T09:00:00 (no Z)
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"startAt: must be an ISO-8601 timestamp with timezone, e.g. 2026-10-20T09:00:00.000Z"}}
+Result:   PASS
+
+----
+Test:     T06i Non-ISO date format rejected
+Request:  POST startAt='Oct 20 2026 9:00'
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"startAt: must be an ISO-8601 timestamp with timezone, e.g. 2026-10-20T09:00:00.000Z"}}
+Result:   PASS
+
+----
+Test:     T06j Impossible calendar date (Feb 31) rejected
+Request:  POST startAt=2026-02-31T09:00:00Z
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"startAt: is not a real calendar date/time"}}
+Result:   PASS
+
+----
+Test:     T06k Offset timestamp normalised to UTC
+Request:  POST startAt=2026-09-10T16:00:00+07:00
+Expected: 201
+Actual:   201 {"success":true,"data":{"id":"bk-218920c5-8270-4740-b91f-be561404ca86","equipmentId":"eq-3","borrowerName":"Tz","startAt":"2026-09-10T09:00:00.000Z","endAt":"2026-09-10T11:00:00.000Z","purpose":"offset normalised","createdAt":"2026-10-06T06:40:32.586Z","updatedAt":"2026-10-06T06:40:32.586Z"}}
+Result:   PASS
+
+----
+Test:     T07 Booking not found
+Request:  GET /bookings/bk-does-not-exist
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"NOT_FOUND","message":"Booking not found"}}
+Result:   PASS
+
+----
+Test:     T08 Equipment not found
+Request:  POST equipmentId=eq-999
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"EQUIPMENT_NOT_FOUND","message":"Equipment 'eq-999' does not exist"}}
+Result:   PASS
+
+----
+Test:     T09a Overlap at the end of A
+Request:  POST eq-1 10:00-12:00 vs A 09:00-11:00
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T09b New fully inside A
+Request:  POST eq-1 09:30-10:00
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T09c New fully wraps A
+Request:  POST eq-1 08:00-12:00
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T09d Same time, different equipment allowed
+Request:  POST eq-2 09:00-11:00
+Expected: 201
+Actual:   201 {"success":true,"data":{"id":"bk-13ed9468-d1ec-4532-b596-d9464d0d5e9d","equipmentId":"eq-2","borrowerName":"Other","startAt":"2026-10-20T09:00:00.000Z","endAt":"2026-10-20T11:00:00.000Z","purpose":"different equipment","createdAt":"2026-10-06T06:40:32.743Z","updatedAt":"2026-10-06T06:40:32.743Z"}}
+Result:   PASS
+
+----
+Test:     T11a Back-to-back (11:00-13:00 after 09:00-11:00)
+Request:  POST eq-1 11:00-13:00
+Expected: 201
+Actual:   201 {"success":true,"data":{"id":"bk-39453de0-3037-45cf-a205-1fc324bfb411","equipmentId":"eq-1","borrowerName":"B2B","startAt":"2026-10-20T11:00:00.000Z","endAt":"2026-10-20T13:00:00.000Z","purpose":"back to back","createdAt":"2026-10-06T06:40:32.766Z","updatedAt":"2026-10-06T06:40:32.766Z"}}
+Result:   PASS
+
+----
+Test:     T11b 10:59 start overlaps A by one minute
+Request:  POST eq-1 10:59-13:00
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T10a PATCH B into A's slot
+Request:  PATCH /bookings/bk-39453de0-3037-45cf-a205-1fc324bfb411 into 09:00-11:00
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T10a2 PATCH only endAt (merged range)
+Request:  PATCH B endAt=10:00 (start stays 11:00)
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"endAt: must be after startAt"}}
+Result:   PASS
+
+----
+Test:     T10a3 PATCH only startAt into overlap
+Request:  PATCH B startAt=10:00 (end stays 13:00)
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T10b PATCH B to free slot
+Request:  PATCH B to 14:00-15:00
+Expected: 200
+Actual:   200 {"success":true,"data":{"id":"bk-39453de0-3037-45cf-a205-1fc324bfb411","equipmentId":"eq-1","borrowerName":"B2B","startAt":"2026-10-20T14:00:00.000Z","endAt":"2026-10-20T15:00:00.000Z","purpose":"back to back","createdAt":"2026-10-06T06:40:32.766Z","updatedAt":"2026-10-06T06:40:32.926Z"}}
+Result:   PASS
+
+----
+Test:     T10c PATCH to own current slot (no self-conflict)
+Request:  PATCH B to the same 14:00-15:00
+Expected: 200
+Actual:   200 {"success":true,"data":{"id":"bk-39453de0-3037-45cf-a205-1fc324bfb411","equipmentId":"eq-1","borrowerName":"B2B","startAt":"2026-10-20T14:00:00.000Z","endAt":"2026-10-20T15:00:00.000Z","purpose":"back to back","createdAt":"2026-10-06T06:40:32.766Z","updatedAt":"2026-10-06T06:40:32.957Z"}}
+Result:   PASS
+
+----
+Test:     T10d PATCH moving equipment into a clash
+Request:  PATCH B to eq-2 09:30-10:30 (eq-2 booked 09:00-11:00)
+Expected: 409
+Actual:   409 {"success":false,"error":{"code":"BOOKING_CONFLICT","message":"That equipment is already booked for an overlapping time"}}
+Result:   PASS
+
+----
+Test:     T10e PATCH to nonexistent equipment
+Request:  PATCH B equipmentId=eq-999
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"EQUIPMENT_NOT_FOUND","message":"Equipment 'eq-999' does not exist"}}
+Result:   PASS
+
+----
+Test:     T10f PATCH nonexistent booking
+Request:  PATCH /bookings/bk-nope
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"NOT_FOUND","message":"Booking not found"}}
+Result:   PASS
+
+----
+Test:     T10g PATCH empty body
+Request:  PATCH B {}
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"provide at least one field to update"}}
+Result:   PASS
+
+----
+Test:     T10h PATCH invalid field
+Request:  PATCH B borrowerName=''
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"VALIDATION_ERROR","message":"borrowerName: Too small: expected string to have >=1 characters"}}
+Result:   PASS
+
+----
+Test:     T12a SQLi payload stored as plain text
+Request:  POST borrowerName="' OR 1=1 --", purpose contains DROP TABLE
+Expected: 201
+Actual:   201 {"success":true,"data":{"id":"bk-50932234-5629-4bf7-b329-f474c8bb76ee","equipmentId":"eq-1","borrowerName":"' OR 1=1 --","startAt":"2026-12-01T09:00:00.000Z","endAt":"2026-12-01T10:00:00.000Z","purpose":"x'; DROP TABLE bookings; --","createdAt":"2026-10-06T06:40:33.169Z","updatedAt":"2026-10-06T06:4
+Result:   PASS
+
+----
+Test:     T12b SQLi in path id returns nothing
+Request:  GET /bookings/' OR 1=1 --
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"NOT_FOUND","message":"Booking not found"}}
+Result:   PASS
+
+----
+Test:     T12c SQLi in equipmentId is just an unknown id
+Request:  POST equipmentId="eq-1' OR '1'='1"
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"EQUIPMENT_NOT_FOUND","message":"Equipment 'eq-1' OR '1'='1' does not exist"}}
+Result:   PASS
+
+----
+Test:     T12d Table intact, exactly one row added by T12a
+Request:  GET /bookings count before/after
+Expected: 5 -> 6
+Actual:   5 -> 6
+Result:   PASS
+
+----
+Test:     T13a Malformed JSON
+Request:  POST truncated JSON
+Expected: 400
+Actual:   400 {"success":false,"error":{"code":"INVALID_JSON","message":"Request body must be valid JSON"}}
+Result:   PASS
+
+----
+Test:     T13b Unknown route returns JSON 404
+Request:  GET /api/nonexistent
+Expected: 404
+Actual:   404 {"success":false,"error":{"code":"NOT_FOUND","message":"Route not found"}}
+Result:   PASS
+
+----
+Test:     T14 List equipment
+Request:  GET /equipment
+Expected: 200
+Actual:   200 {"success":true,"data":[{"id":"eq-1","name":"Projector A","location":"Building 1"},{"id":"eq-2","name":"Canon EOS R50 Camera","location":"Media Lab, Building 3"},{"id":"eq-3","name":"MacBook Air 13\" (Loaner #7)","location":"IT Help Desk"},{"id":"eq-4","name":"Arduino Kit - O'Brien's Lab (ห้อ�
+Result:   PASS
+
+----
+Test:     T15a CORS preflight, allowed origin
+Request:  OPTIONS /bookings Origin: http://localhost:3000 (PATCH)
+Expected: 2xx + allow-origin echoes origin + allow-methods has PATCH
+Actual:   204
+Access-Control-Allow-Origin: http://localhost:3000
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Methods: GET,POST,PATCH,DELETE,OPTIONS
+Access-Control-Max-Age: 600
+Result:   PASS
+
+----
+Test:     T15c CORS preflight, file:// tester (Origin: null) is allowed in dev
+Request:  OPTIONS /bookings Origin: null
+Expected: Access-Control-Allow-Origin: null
+Actual:   Access-Control-Allow-Origin: null
+Result:   PASS
+
+----
+Test:     T15b CORS preflight, disallowed origin gets no allow-origin header
+Request:  OPTIONS /bookings Origin: https://evil.example
+Expected: no Access-Control-Allow-Origin header
+Actual:   (header absent)
+Result:   PASS
+
+----
+Test:     T16a FOREIGN KEY rejects unknown equipment
+Request:  wrangler d1 execute: INSERT INTO bookings (id,equipment_id,borrower_name,start_at,end_at,purpose) VALUES ('x1','eq-NOPE','n','2026-01-01T09:00:00.000Z','2026-01-01T10:00:00.000Z','p')
+Expected: rejected, error mentions "FOREIGN KEY"
+Actual:   ✘ [ERROR] FOREIGN KEY constraint failed: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_FOREIGNKEY) 
+Result:   PASS
+
+----
+Test:     T16b CHECK rejects end_at <= start_at
+Request:  wrangler d1 execute: INSERT INTO bookings (id,equipment_id,borrower_name,start_at,end_at,purpose) VALUES ('x2','eq-1','n','2026-01-01T10:00:00.000Z','2026-01-01T09:00:00.000Z','p')
+Expected: rejected, error mentions "CHECK"
+Actual:   ✘ [ERROR] CHECK constraint failed: end_at > start_at: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_CHECK) 
+Result:   PASS
+
+----
+Test:     T16c NOT NULL rejects NULL purpose
+Request:  wrangler d1 execute: INSERT INTO bookings (id,equipment_id,borrower_name,start_at,end_at,purpose) VALUES ('x3','eq-1','n','2026-01-01T09:00:00.000Z','2026-01-01T10:00:00.000Z',NULL)
+Expected: rejected, error mentions "NOT NULL"
+Actual:   ✘ [ERROR] NOT NULL constraint failed: bookings.purpose: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_NOTNULL) 
+Result:   PASS
+
+----
+Test:     T16d UNIQUE rejects duplicate equipment name
+Request:  wrangler d1 execute: INSERT INTO equipment (id,name,location) VALUES ('eq-9','Projector A','Somewhere')
+Expected: rejected, error mentions "UNIQUE"
+Actual:   ✘ [ERROR] UNIQUE constraint failed: equipment.name: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_UNIQUE) 
+Result:   PASS
+
+----
+Test:     T16e DB-level overlap guard rejects clash
+Request:  wrangler d1 execute: INSERT INTO bookings (id,equipment_id,borrower_name,start_at,end_at,purpose) VALUES ('x4','eq-1','n','2026-10-20T10:00:00.000Z','2026-10-20T10:30:00.000Z','p')
+Expected: rejected, error mentions "overlap"
+Actual:   ✘ [ERROR] booking overlap: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_TRIGGER) 
+Result:   PASS
+
+================ SUMMARY: 50 passed, 0 failed, 50 total ================

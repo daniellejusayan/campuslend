@@ -2,6 +2,12 @@
   "name": "campuslend",
   "main": "src/index.ts",
   "compatibility_date": "2025-09-01",
+  "vars": {
+    // Comma-separated browser origins allowed by CORS. "null" is the Origin a browser sends
+    // when tester.html is opened straight from disk (file://). Remove it if you serve the
+    // tester over http://localhost instead.
+    "ALLOWED_ORIGINS": "http://localhost:8787,http://127.0.0.1:8787,http://localhost:3000,http://localhost:5173,http://localhost:8080,null"
+  },
   "d1_databases": [
     {
       "binding": "DB",
