@@ -22,7 +22,7 @@ Real curl/wrangler runs: v1 34/46, v2 50/50 (`docs/`). SQL audit by grep + scrip
 v1 was deliberately written as a quick first pass (single file, naive PATCH, default CORS) so a Quality Gate could be
 performed. The findings were then observed from real test failures, not invented.
 ### My understanding
-**CampusLend is a REST API for managing campus equipment bookings. It uses Hono, TypeScript, and D1/SQLite to handle equipment and booking data through CRUD operations. The API validates booking data, checks that equipment exists, and prevents overlapping bookings for the same equipment. It also uses appropriate HTTP status codes and parameterized SQL queries to keep the API predictable and secure.**
+**CampusLend is a REST API for managing campus equipment bookings. It uses Hono, TypeScript, and D1/SQLite to provide CRUD operations, validate booking requests, check that equipment exists, and prevent overlapping bookings for the same equipment.**
 
 ## Entry 2 — Tooling problems during the session
 ### Task
@@ -30,7 +30,7 @@ Get the tests running in the sandbox.
 ### What happened
 `jq` was not installed (fetched the official release binary); the dev server was killed between tool calls (restarted detached); an over-broad `pkill` killed my own shell (switched to killing by process group). None affected the API code.
 ### My understanding
-**I understand that CampusLend is an API for managing campus equipment and bookings. It allows users to create, view, update, and delete bookings while validating requests and preventing overlapping bookings for the same equipment.**
+**I understand that the project can be tested through automated API tests and that the development environment must be set up correctly for those tests to run. Problems with tools such as Bash or jq can affect the testing process without necessarily meaning that the API itself is broken.**
 
 ## Entry 3 — Final Quality Gate verification (Claude Code, local machine)
 ### Task
@@ -56,7 +56,7 @@ temporary folder for the test run only.
 `docs/guide-before-fix.txt` (4 FAIL) → `docs/guide-after-fix.txt` (0 FAIL); `docs/evidence-v3-final.txt` 57/57;
 `docs/error-500-check.txt`; `docs/trigger-fallback-check.txt`; `npm run typecheck` clean.
 ### My understanding
-**The error body must use `{"error": "..."}` to follow the API contract consistently. `TEXT PRIMARY KEY` gives each record a unique identifier, while `NOT NULL` prevents required fields from being empty. Passing the initial tests did not prove the booking rule was correct because they did not cover all overlap cases, so additional tests were needed to verify the rule properly.**
+**The API uses `{"error": "..."}` for errors so the response format is consistent with the requirements. `TEXT PRIMARY KEY` identifies each record, while `NOT NULL` ensures required IDs cannot be missing. I also understand that passing the original tests was not enough because they did not cover every booking-overlap case, so additional tests were needed.**
 
 ## Entry 4 — Make tests run on Windows without jq; submission and deployment prep (Claude Code)
 ### Task
@@ -84,7 +84,7 @@ Follow-up: the student opened the base URL `/api` in a browser and saw `{"error"
 (only `/api/equipment` etc. were routes). Added a `GET /`, `/api`, `/api/` index returning the endpoint list
 (`src/index.ts`), plus tests T13c–T13e; unknown routes still return a JSON 404 (T13b). Local 70/70, redeployed, live 70/70.
 ### My understanding
-**`npm test` runs the project’s automated API tests to check that the main requirements work correctly. It resets the bookings first so each test starts with a clean and predictable database. To demonstrate it, I would show one valid booking request returning `201`, then send an overlapping booking request and show that it correctly returns `409 Conflict`.**
+**`npm test` runs the automated API tests and checks both normal and error cases. The tests reset the bookings so each run starts from a predictable state. To demonstrate the booking rule, I can show a valid booking returning `201`, followed by an overlapping booking for the same equipment returning `409 Conflict`.**
 
 ## Entry template (copy for further AI use)
 ### Task / AI suggestion / Accepted / Rejected / Verification / My understanding
